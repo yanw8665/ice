@@ -10,7 +10,6 @@ const defaultConfig = require('./config/default.config');
 const validation = require('./config/validation');
 const optionConfig = require('./config/option.config');
 const getFilePath = require('./utils/getFilePath');
-const collect = require('./utils/collect');
 
 // eslint-disable-next-line
 const chalk = require('chalk');
@@ -26,9 +25,8 @@ module.exports = ({
   onHook,
   log,
 }) => {
-  const { command, rootDir, webpack, commandArgs, pkg } = context;
+  const { command, rootDir, webpack, commandArgs } = context;
   const appMode = commandArgs.mode || command;
-  collect({ command, log, rootDir, pkg });
   modifyUserConfig((userConfig) => {
     const { modeConfig = {} } = userConfig;
     return modeConfig[appMode] || {};
