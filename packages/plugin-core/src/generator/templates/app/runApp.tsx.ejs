@@ -1,5 +1,4 @@
 import RuntimeModule from './runtimeModule';
-import { getHistory } from './history/web';
 
 <% if (miniapp) { %>
   import renderMiniapp from './renderer/miniapp';
@@ -7,6 +6,7 @@ import { getHistory } from './history/web';
 
 <% if (web) { %>
   import renderWeb from './renderer/web';
+  import { getHistory } from './history/web';
 <% } %>
 
 function runApp(appConfig = {}, runtimeConfig = {}) {
