@@ -1,15 +1,18 @@
-<%- iceImports %>
+export * from './runApp';
 
-export { createApp } from './createApp';
-export { history } from './history';
-export * from './types';
-export * from './lazy';
-export * from './components';
+// Web API
+<% if (web) { %>
+  <%- iceImports %>
 
-export const APP_MODE = (global as any).__app_mode__ || process.env.APP_MODE;
+  export const APP_MODE = (global as any).__app_mode__ || process.env.APP_MODE;
+  export { history } from './history';
+  export * from './types';
+  export * from './lazy';
+  export * from './components';
 
-<% if (iceExports) { %>
-export {
-<%- iceExports %>
-}
+  <% if (iceExports) { %>
+    export {
+      <%- iceExports %>
+    }
+  <% } %>
 <% } %>

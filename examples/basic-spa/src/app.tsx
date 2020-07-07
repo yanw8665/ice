@@ -1,7 +1,7 @@
 import React from 'react';
-import { createApp, APP_MODE, IAppConfig } from 'ice';
+import { runApp, APP_MODE } from 'ice';
 
-const appConfig: IAppConfig = {
+runApp({
   app: {
     rootId: 'ice-container',
     errorBoundary: true,
@@ -26,6 +26,6 @@ const appConfig: IAppConfig = {
       }
     }
   }
-};
+}, {
 
-createApp(appConfig);
+});

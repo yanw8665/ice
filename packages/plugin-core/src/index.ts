@@ -12,7 +12,8 @@ export default (api) => {
   const { onHook, onGetWebpackConfig, registerMethod, registerUserConfig, context, getAllPlugin, setValue, modifyUserConfig, log } = api;
   const { rootDir, command, userConfig } = context;
 
-  const iceTempPath = path.join(rootDir, '.ice');
+  const tempDir = userConfig.framework === 'rax' ? 'rax' : 'ice';
+  const iceTempPath = path.join(rootDir, `.${tempDir}`);
   setValue('ICE_TEMP', iceTempPath);
   const tsEntryFiles = globby.sync(['src/app.@(ts?(x))', 'src/pages/*/app.@(ts?(x))'], { cwd: rootDir });
   const projectType = tsEntryFiles.length ? 'ts' : 'js';
@@ -83,12 +84,16 @@ export default (api) => {
     }
   });
 
+
+
   // check global style file
   const generator = new Generator({
     projectRoot: rootDir,
     targetDir: iceTempPath,
     templateDir: path.join(__dirname, './generator/templates/app'),
     defaultData: {
+      miniapp: userConfig.appType.includes('miniapp'),
+      web: userConfig.appType.includes('web'),
       runtimeModules,
       buildConfig: JSON.stringify(buildConfig)
     },
@@ -117,6 +122,12 @@ export default (api) => {
   registerUserConfig({
     name: 'ssr',
     validation: 'boolean',
+  });
+
+  // register ssr in build.json
+  registerUserConfig({
+    name: 'appType',
+    validation: 'array',
   });
 
   // register utils method

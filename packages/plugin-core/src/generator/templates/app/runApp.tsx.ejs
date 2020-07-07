@@ -1,0 +1,39 @@
+import RuntimeModule from './runtimeModule';
+import { getHistory } from './history/web';
+
+<% if (miniapp) { %>
+  import renderMiniapp from './renderer/miniapp';
+<% } %>
+
+<% if (web) { %>
+  import renderWeb from './renderer/web';
+<% } %>
+
+function runApp(appConfig = {}, runtimeConfig = {}) {
+  <% if (miniapp) { %>
+    renderMiniapp(appConfig, runtimeConfig);
+  <% } %>
+
+  <% if (web) { %>
+    // TODO：需要收敛
+    const history = getHistory(appConfig);
+    appConfig.router.history = history;
+
+    // 加载运行时模块
+    const runtimeInstance = new RuntimeModule(appConfig, <%- buildConfig %>);
+    loadRuntimeModules(runtimeInstance);
+    renderWeb(appConfig, runtimeConfig, runtimeInstance);
+  <% } %>
+}
+
+function loadRuntimeModules(runtime) {
+  <% if (runtimeModules.length) {%>
+    <% runtimeModules.forEach((runtimeModule) => { %>
+      <% if(!runtimeModule.staticModule){ %>
+        runtime.loadModlue(require('<%= runtimeModule.path %>'));
+      <% } %>
+    <% }) %>
+  <% } %>
+}
+
+export { runApp };

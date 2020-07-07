@@ -3,5 +3,6 @@
     "../../packages/plugin-miniapp/lib/index.js"
   ],
   "minify": false,
-  "disableRuntime": true
+  "injectBabel": false,
+  "appType": ["miniapp"]
 }

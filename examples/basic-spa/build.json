@@ -1,11 +1,6 @@
 {
-  "ignoreHtmlTemplate": true,
   "plugins": [],
-  "modeConfig": {
-    "prod": {
-      "ignoreHtmlTemplate": false
-    }
-  },
+  "appType": ["web"],
   "eslint": {
     "disable": false,
     "quiet": true
