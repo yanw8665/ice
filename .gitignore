@@ -12,8 +12,9 @@ package-lock.json
 # Packages
 packages/*/lib/
 
-# temp folder .ice
+# temp folder .ice/.rax
 examples/*/.ice
+examples/*/.rax
 
 .eslintcache
 docs/.vuepress/dist/

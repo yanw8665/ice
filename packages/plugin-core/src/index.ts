@@ -28,7 +28,7 @@ export default (api) => {
       : null;
   // TODO: 考虑 tempDir 不存在
   // const iceTempPath = path.join(rootDir, `.${tempDir}`);
-  const iceTempPath = path.join(rootDir, '.ice');
+  const iceTempPath = path.join(rootDir, '.rax');
   setValue('ICE_TEMP', iceTempPath);
   const tsEntryFiles = globby.sync(['src/app.@(ts?(x))', 'src/pages/*/app.@(ts?(x))'], { cwd: rootDir });
   const projectType = tsEntryFiles.length ? 'ts' : 'js';
@@ -64,7 +64,7 @@ export default (api) => {
 
   onGetWebpackConfig((config: any) => {
     // const aliasName = tempDir === 'rax' ? 'raxapp' : 'ice';
-    config.resolve.alias.set('ice$', path.join(iceTempPath, 'index.js'));
+    config.resolve.alias.set('raxapp$', path.join(iceTempPath, 'index.js'));
     // config.resolve.alias.set('ice', path.join(iceTempPath, 'pages'));
     // config.resolve.alias.set('raxapp', path.join(iceTempPath, 'pages'));
 

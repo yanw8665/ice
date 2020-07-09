@@ -1,4 +1,4 @@
-import { runApp } from 'ice';
+import { runApp } from 'raxapp';
 import appConfig from './app.json';
 
 console.log('runApp:', runApp);
