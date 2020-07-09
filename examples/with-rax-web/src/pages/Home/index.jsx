@@ -1,15 +1,18 @@
-import * as React from 'react';
-import styles from './index.module.scss';
+import { createElement } from 'rax';
+import View from 'rax-view';
+import Text from 'rax-text';
 
-const Home = (props) => {
-  const { history } = props;
+import './index.css';
+
+import Logo from '../../components/Logo';
+
+export default function Home() {
   return (
-    <div className={styles.container}>
-      <h2 className={styles.title}>Welcome to icejs miniapp!</h2>
-      <p className={styles.description}>This is a awesome project, enjoy it!</p>
-      <p onClick={() => history.push('/about')}>go about</p>
-    </div>
+    <View className="home">
+      <Logo />
+      <Text className="title">Welcome to Your Rax App!!!</Text>
+      <Text className="info">More information about Rax</Text>
+      <Text className="info">Visit https://rax.js.org</Text>
+    </View>
   );
-};
-
-export default Home;
+}

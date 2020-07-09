@@ -2,32 +2,20 @@
   "compileOnSave": false,
   "buildOnSave": false,
   "compilerOptions": {
-    "baseUrl": ".",
+    "module": "esNext",
+    "target": "es2015",
     "outDir": "build",
-    "module": "esnext",
-    "target": "es6",
-    "jsx": "react",
+    "jsx": "preserve",
+    "jsxFactory": "createElement",
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "lib": ["es6", "dom"],
     "sourceMap": true,
-    "allowJs": true,
-    "rootDir": "./",
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitAny": false,
-    "importHelpers": true,
-    "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true,
-    "skipLibCheck": true,
+    "alwaysStrict": true,
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "ice": [".ice/index.ts"],
-      "ice/*": [".ice/pages/*"]
+      "raxjs": [".rax/index.ts"]
     }
   },
-  "include": ["src/*", ".ice"],
+  "include": ["src/*", ".rax"],
   "exclude": ["node_modules", "build", "public"]
 }

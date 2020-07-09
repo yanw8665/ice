@@ -18,6 +18,7 @@
     { "path": "packages/plugin-miniapp" },
     { "path": "packages/plugin-fast-refresh" },
     { "path": "packages/create-ice" },
-    { "path": "packages/icejs" }
+    { "path": "packages/icejs" },
+    { "path": "packages/raxjs" }
   ]
 }

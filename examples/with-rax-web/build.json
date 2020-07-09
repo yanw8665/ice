@@ -1,6 +1,4 @@
 {
   "plugins": [],
-  "minify": false,
-  "injectBabel": false,
-  "appType": ["h5"]
+  "targets": ["web"]
 }

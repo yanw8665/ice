@@ -11,8 +11,22 @@ import formatPath from './utils/formatPath';
 export default (api) => {
   const { onHook, onGetWebpackConfig, registerMethod, registerUserConfig, context, getAllPlugin, setValue, modifyUserConfig, log } = api;
   const { rootDir, command, userConfig } = context;
-
-  const tempDir = userConfig.framework === 'rax' ? 'rax' : 'ice';
+  // 根据依赖中是否有 rax/react 生成 .rax/.ice
+  const pkgContent = fse.readJsonSync(path.join(rootDir, 'package.json'));
+  // TODO: 可能依赖不存在给出提示
+  // eslint-disable-next-line
+  const library = pkgContent.dependencies && pkgContent.dependencies.rax
+    ? 'rax'
+    : pkgContent.dependencies && pkgContent.dependencies.react
+      ? 'react'
+      : null;
+  // eslint-disable-next-line
+  const tempDir = library === 'rax'
+    ? 'rax'
+    : library === 'react'
+      ? 'ice'
+      : null;
+  // TODO: 考虑 tempDir 不存在
   const iceTempPath = path.join(rootDir, `.${tempDir}`);
   setValue('ICE_TEMP', iceTempPath);
   const tsEntryFiles = globby.sync(['src/app.@(ts?(x))', 'src/pages/*/app.@(ts?(x))'], { cwd: rootDir });
@@ -41,26 +55,27 @@ export default (api) => {
       };
     });
 
-  if (!userConfig.entry) {
-    // modify default entry to src/app
-    modifyUserConfig('entry', 'src/app');
-  }
+  // Config key 'entry' is not supported
+  // if (!userConfig.entry) {
+  //   // modify default entry to src/app
+  //   modifyUserConfig('entry', 'src/app');
+  // }
 
   onGetWebpackConfig((config: any) => {
-    config.resolve.alias.set('ice$', path.join(iceTempPath, 'index.ts'));
-    config.resolve.alias.set('ice', path.join(iceTempPath, 'pages'));
+    config.resolve.alias.set(`${tempDir}$`, path.join(iceTempPath, 'index.ts'));
+    config.resolve.alias.set(`${tempDir}`, path.join(iceTempPath, 'pages'));
 
     // default alias of @/
-    config.resolve.alias.set('@', path.join(rootDir, 'src'));
-    config.resolve.alias.set('$ice/appConfig', path.join(iceTempPath, 'appConfig.ts'));
-    config.resolve.alias.set('$ice/components', path.join(iceTempPath, 'components'));
+    // config.resolve.alias.set('@', path.join(rootDir, 'src'));
+    // config.resolve.alias.set('$ice/appConfig', path.join(iceTempPath, 'appConfig.ts'));
+    // config.resolve.alias.set('$ice/components', path.join(iceTempPath, 'components'));
 
-    const defineVariables = {
-      'process.env.__IS_SERVER__': false
-    };
-    config
-      .plugin('DefinePlugin')
-      .tap(([args]) => [{ ...args, ...defineVariables }]);
+    // const defineVariables = {
+    //   'process.env.__IS_SERVER__': false
+    // };
+    // config
+    //   .plugin('DefinePlugin')
+    //   .tap(([args]) => [{ ...args, ...defineVariables }]);
 
     // add alias of basic dependencies
     const basicDependencies = [
@@ -84,16 +99,15 @@ export default (api) => {
     }
   });
 
-
-
-  // check global style file
+  const { targets = [] } = userConfig;
   const generator = new Generator({
     projectRoot: rootDir,
     targetDir: iceTempPath,
     templateDir: path.join(__dirname, './generator/templates/app'),
     defaultData: {
-      miniapp: userConfig.appType.includes('miniapp'),
-      web: userConfig.appType.includes('web'),
+      miniapp: targets.includes('miniapp'),
+      web: targets.includes('web'),
+      library,
       runtimeModules,
       buildConfig: JSON.stringify(buildConfig)
     },
@@ -126,7 +140,7 @@ export default (api) => {
 
   // register ssr in build.json
   registerUserConfig({
-    name: 'appType',
+    name: 'targets',
     validation: 'array',
   });
 

@@ -7,7 +7,6 @@ import { ErrorBoundary } from './components';
 import { setAppConfig } from './appConfig';
 import { createHistory } from './history';
 import { IAppConfig } from './types';
-<% if (globalStyle) {%>import '../<%= globalStyle %>'<% } %>
 
 export interface IContext {
   initialData?: any;
@@ -17,12 +16,12 @@ export interface IContext {
 
 const defaultAppConfig = {
   app: {
-    rootId: 'ice-container'
+    rootId: 'ice-container',
   },
   router: {
-    type: 'hash'
-  }
-}
+    type: 'hash',
+  },
+};
 
 function createAppWithSSR(customConfig: IAppConfig, context: IContext) {
   const appConfig = deepmerge(defaultAppConfig, customConfig);
@@ -60,7 +59,7 @@ function createApp(customConfig: IAppConfig) {
   } else {
     // ssr not enabled, or SSR is enabled but the server does not return data
     if (appConfig.app.getInitialData) {
-      (async() => {
+      (async () => {
         // @ts-ignore
         initialData = await appConfig.app.getInitialData();
         renderApp(appConfig, { initialData, pageInitialProps });
@@ -72,22 +71,35 @@ function createApp(customConfig: IAppConfig) {
 }
 
 function renderApp(config: IAppConfig, context?: IContext) {
-  const runtime = new RuntimeModule(config, <%- buildConfig %>, context)
+  const runtime = new RuntimeModule(config, {}, context);
   loadModlues(runtime);
-  const { appConfig, modifyDOMRender } = runtime
-  const { rootId, mountNode, ErrorBoundaryFallback, onErrorBoundaryHander, errorBoundary } = appConfig.app
+  const { appConfig, modifyDOMRender } = runtime;
+  const {
+    rootId,
+    mountNode,
+    ErrorBoundaryFallback,
+    onErrorBoundaryHander,
+    errorBoundary,
+  } = appConfig.app;
   const AppProvider = runtime.composeAppProvider();
   const AppRouter = runtime.getAppRouter();
 
   function App() {
     const appRouter = <AppRouter />;
-    const rootApp = AppProvider ? <AppProvider>{appRouter}</AppProvider> : appRouter;
+    const rootApp = AppProvider ? (
+      <AppProvider>{appRouter}</AppProvider>
+    ) : (
+      appRouter
+    );
     if (errorBoundary) {
       return (
-        <ErrorBoundary Fallback={ErrorBoundaryFallback} onError={onErrorBoundaryHander}>
+        <ErrorBoundary
+          Fallback={ErrorBoundaryFallback}
+          onError={onErrorBoundaryHander}
+        >
           {rootApp}
         </ErrorBoundary>
-      )
+      );
     }
 
     return rootApp;
@@ -100,33 +112,20 @@ function renderApp(config: IAppConfig, context?: IContext) {
     if (modifyDOMRender) {
       return modifyDOMRender({ App, appMountNode });
     } else {
-      return ReactDOM[window.__ICE_SSR_ENABLED__ ? 'hydrate' : 'render'](<App />, appMountNode);
+      return ReactDOM[window.__ICE_SSR_ENABLED__ ? 'hydrate' : 'render'](
+        <App />,
+        appMountNode
+      );
     }
   }
 }
 
 function loadModlues(runtime) {
-  <% if (runtimeModules.length) {%>
-    <% runtimeModules.forEach((runtimeModule) => { %>
-      <% if(!runtimeModule.staticModule){ %>
-        runtime.loadModlue(require('<%= runtimeModule.path %>'));
-      <% } %>
-    <% }) %>
-  <% } %>
+  runtime.loadModlue(
+    require('/Users/chenbin/Documents/openSource/github/ice/packages/plugin-core/lib/module.js')
+  );
 }
 
-function loadStaticModules(appConfig: IAppConfig) {
-  <% if (runtimeModules.length) {%>
-    <% runtimeModules.forEach((runtimeModule) => { %>
-      <% if(runtimeModule.staticModule){ %>
-        require('<%= runtimeModule.path %>').default({appConfig});
-      <% } %>
-    <% }) %>
-  <% } %>
-}
+function loadStaticModules(appConfig: IAppConfig) {}
 
-export {
-  createApp,
-  createAppWithSSR,
-  loadStaticModules
-}
+export { createApp, createAppWithSSR, loadStaticModules };
